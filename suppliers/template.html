@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://stcadmin.stcstores.co.uk/static/css/stcadmin.css" >
+    <link rel="stylesheet" href="http://stcadmin.stcstores.co.uk/static/css/inventory.css" >
+    <script src="http://stcadmin.stcstores.co.uk/static/scripts/stock_manager.js"></script>
+    <title>{{ supplier}} Products</title>
+</head>
+<body>
+    <button id="eol"></button>
+    <table id="stock_search_result">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th></th>
+                <th colspan="2"><button id="show_hide_all">Show/Hide all</button></th>
+            </tr>
+        </thead>
+            <tbody>
+            {% for range in product_ranges %}
+                <tr{% if range.end_of_line %} class="end_of_line"{% endif %}>
+                    <td>{{ range.sku }}</td>
+                    <td><a href="http://stcadmin.stcstores.co.uk/inventory/product_range/{{ range.id }}/">{{ range.name }}</a> </td>
+                    {% if 'Incomplete' in range.options.option_names %}
+                        <td class="error">INCOMPLETE</td>
+                        <td></td><td></td>
+                    {% else %}
+                    <td>
+                        <a title="Variations" href="http://stcadmin.stcstores.co.uk/inventory/variations/{{ range.id }}/" target="_blank"><button>V</button></a>
+                        <a title="Descriptions" href="http://stcadmin.stcstores.co.uk/descriptions/variations/{{ range.id }}/" target="_blank"><button>D</button></a>
+                        <a title="Locations" href="http://stcadmin.stcstores.co.uk/inventory/locations/{{ range.id }}/" target="_blank"><button>L</button></a>
+                        <a title="Images" href="http://stcadmin.stcstores.co.uk/inventory/images/{{ range.id }}/" target="_blank"><button>I</button></a>
+                        <a title="Price Calulator" href="http://stcadmin.stcstores.co.uk/inventory/range_price_calculator/{{ range.id }}/" target="_blank"><button>P</button></a>
+                        <a title="View on Cloud Commerce" href="http://seatontradingcompany.cloudcommercepro.com/Admin/ProductRange.aspx?ProdRangeID={{ range.id }}&ChannelID=0" target="_blank"><button>C</button></a>
+                    </td>
+                    <td class="products_box">
+                        <table id="products_table_{{ range.id }}" class="products_table">
+                            {% for product in range.products %}
+                                <tr>
+                                    <td>{{ product.sku }}</td>
+                                    <td><a href="http://stcadmin.stcstores.co.uk/inventory/product/{{ product.id }}/">{{ product.full_name }}</a></td>
+                                    <td>{{ product.stock_level }}</td>
+                                    <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
+                                    <td><a href="http://seatontradingcompany.cloudcommercepro.com/Admin/Product.aspx?ProdRangeID={{ range.id }}&ProductID={{ product.id }}&ChannelID=0" target="_blank"><button>C</button></a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <td><span id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</span></td>
+
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            <script>
+
+            $(document).ready(function() {
+
+                var hide_discontinued = true;
+                var eol_button = $('#eol');
+
+                function toggle_discontinued() {
+                    hide_discontinued = !hide_discontinued;
+                    if (hide_discontinued == true) {
+                        eol_button.text('Hide Discontinued');
+                        $('.end_of_line').prop('hidden', false);
+                    } else {
+                        eol_button.text('Show Discontinued');
+                        $('.end_of_line').prop('hidden', true);
+                    }
+                }
+
+                eol_button.click(toggle_discontinued);
+                toggle_discontinued();
+            });
+
+            </script>
+        </tbody>
+    </table>
+</body>
+</html>
