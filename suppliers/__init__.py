@@ -46,7 +46,11 @@ context = Context(
     {'product_ranges': product_ranges, 'supplier': supplier_name})
 html = template.render(context)
 
-OUTPUT_PATH = ''
+OUTPUT_PATH = os.path.join(os.getcwd(), 'HTML')
+
+if not os.path.exists(OUTPUT_PATH):
+    os.makedirs(OUTPUT_PATH)
+
 OUTPUT_FILE = os.path.join(OUTPUT_PATH, '{}.html'.format(supplier_name))
 
 with open(OUTPUT_FILE, 'w') as f:
